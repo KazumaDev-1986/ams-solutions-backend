@@ -9,12 +9,81 @@ La aplicación expone una API REST que permite obtener los detalles de productos
 1. `/product/{productId}/similarids`: Obtiene los IDs de productos similares
 2. `/product/{productId}`: Obtiene los detalles de un producto específico
 
+## Requisitos Previos
+
+- Java 17 o superior
+- Maven 3.6 o superior
+- Docker y Docker Compose
+- Git
+
 ## Tecnologías Utilizadas
 
 - Spring Boot 3.4.5
 - Spring WebFlux
 - Lombok
 - Maven
+- Resilience4j para manejo de errores y retry
+- JUnit 5 para pruebas
+- Mockito para mocks en pruebas
+
+## Instalación
+
+1. Clonar el repositorio:
+
+```bash
+git clone <repository-url>
+cd similar-products
+```
+
+2. Compilar el proyecto:
+
+```bash
+./mvnw clean install
+```
+
+## Ejecución
+
+1. Iniciar los servicios de infraestructura:
+
+```bash
+docker-compose up -d simulado influxdb grafana
+```
+
+2. Verificar que los mocks estén funcionando:
+
+```bash
+curl http://localhost:3001/product/1/similarids
+```
+
+3. Ejecutar la aplicación:
+
+```bash
+./mvnw spring-boot:run
+```
+
+4. Probar el endpoint:
+
+```bash
+curl http://localhost:5001/product/1/similar
+```
+
+## Pruebas
+
+### Pruebas Unitarias
+
+```bash
+./mvnw test
+```
+
+### Pruebas de Rendimiento
+
+```bash
+docker-compose run --rm k6 run scripts/test.js
+```
+
+### Verificar Resultados de Rendimiento
+
+Abrir en el navegador: http://localhost:3000/d/Le2Ku9NMk/k6-performance-test
 
 ## Estructura del Proyecto
 
@@ -33,15 +102,26 @@ similar-products/
 │   │   │               │   └── SimilarProductsService.java
 │   │   │               ├── model/
 │   │   │               │   └── ProductDetail.java
-│   │   │               └── config/
-│   │   │                   └── WebClientConfig.java
+│   │   │               ├── config/
+│   │   │               │   └── WebClientConfig.java
+│   │   │               └── exception/
+│   │   │                   ├── ExternalServiceException.java
+│   │   │                   └── ProductNotFoundException.java
 │   │   └── resources/
 │   │       └── application.properties
 │   └── test/
+│       └── java/
+│           └── com/
+│               └── example/
+│                   └── similarproducts/
+│                       ├── controller/
+│                       │   └── SimilarProductsControllerTest.java
+│                       └── service/
+│                           └── SimilarProductsServiceTest.java
 └── pom.xml
 ```
 
-## Endpoints
+## API Documentation
 
 ### GET /product/{productId}/similar
 
@@ -64,7 +144,13 @@ Obtiene los detalles de los productos similares a un producto dado.
 ]
 ```
 
-**Ejemplo de respuesta**:
+**Códigos de Respuesta**:
+
+- 200: OK - Lista de productos similares
+- 404: Not Found - Producto no encontrado
+- 500: Internal Server Error - Error en el servicio externo
+
+**Ejemplo de respuesta exitosa**:
 
 ```json
 [
@@ -79,14 +165,16 @@ Obtiene los detalles de los productos similares a un producto dado.
     "name": "Blazer",
     "price": 29.99,
     "availability": false
-  },
-  {
-    "id": "4",
-    "name": "Boots",
-    "price": 39.99,
-    "availability": true
   }
 ]
+```
+
+**Ejemplo de respuesta de error**:
+
+```json
+{
+  "error": "Product not found with id: 1"
+}
 ```
 
 ## Configuración
@@ -95,23 +183,18 @@ La aplicación está configurada para:
 
 - Escuchar en el puerto 5001 (configurable en `application.properties`)
 - Consumir los mocks en `http://localhost:3001`
+- Timeouts configurables para las llamadas a servicios externos
+- Política de retry para manejo de errores temporales
 
-## Ejecución
+## Monitoreo
 
-1. Iniciar los mocks:
+- Grafana: http://localhost:3000
+- InfluxDB: http://localhost:8086
 
-```bash
-docker-compose up -d simulado influxdb grafana
-```
+## Contribución
 
-2. Ejecutar la aplicación:
-
-```bash
-./mvnw spring-boot:run
-```
-
-3. Probar el endpoint:
-
-```bash
-curl http://localhost:5001/product/1/similar
-```
+1. Fork el repositorio
+2. Crear una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abrir un Pull Request
