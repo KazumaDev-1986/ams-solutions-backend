@@ -1,91 +1,91 @@
-# Similar Products API
+# API de Productos Similares
 
-Backend application for AMS Solutions technical test.
+Aplicación backend para la prueba técnica de AMS Solutions.
 
-## Description
+## Descripción
 
-The application exposes a REST API that allows obtaining details of products similar to a given product. For this, it consumes two existing APIs:
+La aplicación expone una API REST que permite obtener los detalles de productos similares a un producto dado. Para esto, consume dos APIs existentes:
 
-1. `/product/{productId}/similarids`: Gets the IDs of similar products
-2. `/product/{productId}`: Gets the details of a specific product
+1. `/product/{productId}/similarids`: Obtiene los IDs de productos similares
+2. `/product/{productId}`: Obtiene los detalles de un producto específico
 
-## Prerequisites
+## Requisitos Previos
 
-- Java 17 or higher
-- Maven 3.6 or higher
-- Docker and Docker Compose
+- Java 17 o superior
+- Maven 3.6 o superior
+- Docker y Docker Compose
 - Git
 
-## Technologies Used
+## Tecnologías Utilizadas
 
 - Spring Boot 3.4.5
 - Spring WebFlux
 - Lombok
 - Maven
-- Resilience4j for error handling and retry
-- JUnit 5 for testing
-- Mockito for test mocks
+- Resilience4j para manejo de errores y retry
+- JUnit 5 para pruebas
+- Mockito para mocks en pruebas
 
-## Installation
+## Instalación
 
-1. Clone the repository:
+1. Clonar el repositorio:
 
 ```bash
 git clone <repository-url>
 cd similar-products
 ```
 
-2. Build the project:
+2. Compilar el proyecto:
 
 ```bash
 ./mvnw clean install
 ```
 
-## Execution
+## Ejecución
 
-1. Start infrastructure services:
+1. Iniciar los servicios de infraestructura:
 
 ```bash
 docker-compose up -d simulado influxdb grafana
 ```
 
-2. Verify that mocks are working:
+2. Verificar que los mocks estén funcionando:
 
 ```bash
 curl http://localhost:3001/product/1/similarids
 ```
 
-3. Run the application:
+3. Ejecutar la aplicación:
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-4. Test the endpoint:
+4. Probar el endpoint:
 
 ```bash
 curl http://localhost:5000/product/1/similar
 ```
 
-## Testing
+## Pruebas
 
-### Unit Tests
+### Pruebas Unitarias
 
 ```bash
 ./mvnw test
 ```
 
-### Performance Tests
+### Pruebas de Rendimiento
 
 ```bash
 docker-compose run --rm k6 run scripts/test.js
 ```
 
-### Check Performance Results
+### Verificar Resultados de Rendimiento
 
-Open in browser: http://localhost:3000/d/Le2Ku9NMk/k6-performance-test
+Abrir en el navegador: http://localhost:3000/d/Le2Ku9NMk/k6-performance-test
 
-## Project Structure
+## Estructura del Proyecto
 
 ```
 similar-products/
@@ -121,17 +121,17 @@ similar-products/
 └── pom.xml
 ```
 
-## API Documentation
+## Documentación de la API
 
 ### GET /product/{productId}/similar
 
-Gets the details of products similar to a given product.
+Obtiene los detalles de los productos similares a un producto dado.
 
-**Parameters**:
+**Parámetros**:
 
-- `productId` (path): Product ID
+- `productId` (path): ID del producto
 
-**Response**:
+**Respuesta**:
 
 ```json
 [
@@ -144,13 +144,13 @@ Gets the details of products similar to a given product.
 ]
 ```
 
-**Response Codes**:
+**Códigos de Respuesta**:
 
-- 200: OK - List of similar products
-- 404: Not Found - Product not found
-- 500: Internal Server Error - External service error
+- 200: OK - Lista de productos similares
+- 404: Not Found - Producto no encontrado
+- 500: Internal Server Error - Error en el servicio externo
 
-**Successful response example**:
+**Ejemplo de respuesta exitosa**:
 
 ```json
 [
@@ -169,7 +169,7 @@ Gets the details of products similar to a given product.
 ]
 ```
 
-**Error response example**:
+**Ejemplo de respuesta de error**:
 
 ```json
 {
@@ -177,24 +177,24 @@ Gets the details of products similar to a given product.
 }
 ```
 
-## Configuration
+## Configuración
 
-The application is configured to:
+La aplicación está configurada para:
 
-- Listen on port 5000 (configurable in `application.properties`)
-- Consume mocks at `http://localhost:3001`
-- Configurable timeouts for external service calls
-- Retry policy for handling temporary errors
+- Escuchar en el puerto 5000 (configurable en `application.properties`)
+- Consumir los mocks en `http://localhost:3001`
+- Timeouts configurables para las llamadas a servicios externos
+- Política de retry para manejo de errores temporales
 
-## Monitoring
+## Monitoreo
 
 - Grafana: http://localhost:3000
 - InfluxDB: http://localhost:8086
 
-## Contributing
+## Contribución
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+1. Fork el repositorio
+2. Crear una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abrir un Pull Request
